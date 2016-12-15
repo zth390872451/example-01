@@ -1,8 +1,8 @@
 package com.company.service;
 
 import com.company.domain.Role;
-import com.company.web.domain.Member;
-import com.company.web.repository.AccountUserRepository;
+import com.company.web.controller.domain.AccountUser;
+import com.company.web.controller.repository.AccountUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,32 +16,33 @@ import java.util.Collection;
 
 
 @Service
-public class CustomUserDetailsServiceSelf implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
-	private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsServiceSelf.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 	@Autowired
 	private AccountUserRepository accountUserRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Member member = accountUserRepository.findOneByMobile(username);
-		if (member == null) {
+		AccountUser accountUser = accountUserRepository.findOneByMobile(username);
+		if (accountUser == null) {
 			log.error("用户不存在");
-			throw new UsernameNotFoundException(String.format("User %s does not exist!", username));
+			throw new UsernameNotFoundException(String.format("AccountUser %s does not exist!", username));
 		}
-		return new B(member);
+		return new UserRepositoryUserDetails(accountUser);
 	}
 
 	/**
 	 * bug：在重命名该类为B(原有名字为A)之后，若仍旧以原来的账号密码进行获取AccessToken信息(旧AccessToken失效，刷新AccessToken方式)，将会提示
-	 *  A类找不到(ClassNotFound)的异常。解决方式：删除数据库的两张表对应的两条记录： oauth_access_token 和oauth_refresh_token
+	 *  A类找不到(ClassNotFound)的异常。或者是在 自定义的 loadUserByUsername(String username)方法执行时，username=null，导致 获取AccessToken失败，提示用户不存在
+	 *  解决方式：删除数据库的两张表对应的两条记录： oauth_access_token 和oauth_refresh_token
 	 */
-	private final static class B extends Member implements UserDetails {
+	private final static class UserRepositoryUserDetails extends AccountUser implements UserDetails {
 		private static final long serialVersionUID = 1L;
-		private B(Member member) {
-			super(member);
+		private UserRepositoryUserDetails(AccountUser accountUser) {
+			super(accountUser);
 		}
-
+//		BasicAuthenticationFilter
 		@Override
 		public Collection<? extends GrantedAuthority> getAuthorities() {
 			Role role = new Role();

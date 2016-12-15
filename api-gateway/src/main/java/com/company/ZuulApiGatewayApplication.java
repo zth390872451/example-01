@@ -1,7 +1,7 @@
 package com.company;
 
-//import com.company.web.fileter.AccessFilter;
-import com.company.web.fileter.AccessFilter;
+//import com.company.AccessFilter;
+import com.company.web.controller.fileter.AccessFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;

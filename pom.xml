@@ -10,21 +10,43 @@
     <packaging>pom</packaging>
 
     <modules>
+        <!--网关模块，主要负责获取访问凭证、校验、路由等-->
         <module>api-gateway</module>
-        <module>eureka-client-node-one</module>
-        <module>eureka-client-node-two</module>
-        <module>eureka-client-node-three</module>
+
+        <!--配置服务器-->
         <module>config-server</module>
+        <!--注册中心(可配置多台，高可用)-->
         <module>eureka-server</module>
 
+        <!--通用模块依赖-->
         <module>common-module</module>
+        <!--异常处理机制-->
         <module>common-exception-handler</module>
 
-        <module>test-spring-boot-admin</module>
-        <module>test-spring-cloud-zipkin</module>
-        <!--<module>test-spring-cloud-sleuth</module>-->
+        <!--Spring Security OAuth2 认证服务-->
+        <module>eureka-oauth2-server</module>
+
+        <!-- 普通服务(集群节点1）：add 计算  -->
         <module>compute-service-node-one</module>
+        <!-- 普通服务(集群节点2)：add 计算  -->
         <module>compute-service-node-two</module>
+
+        <!-- 下面的 ${name}-client-node-one 都是集群的服务节点，只是里头使用了不同的形式(技术)-->
+
+        <!--简单的Eureka客户端节点-->
+        <module>eureka-client-node-one</module>
+        <!--Ribbon客户端节点-->
+        <module>eureka-client-node-two</module>
+        <!--Feign形式客户端节点-->
+        <module>eureka-client-node-three</module>
+
+
+
+        <!-- 健康监控服务 -->
+        <module>eureka-client-admin</module>
+        <!-- 日志监控服务 -->
+        <module>eureka-client-zipkin</module>
+        <!--<module>test-spring-cloud-sleuth</module>-->
 
     </modules>
 
@@ -52,6 +74,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <!--热加载-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>springloaded</artifactId>
+            <version>1.2.3.RELEASE</version>
         </dependency>
 
     </dependencies>
